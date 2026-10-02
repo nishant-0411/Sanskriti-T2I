@@ -1,13 +1,16 @@
 import os
 from typing import List, Dict
+from dotenv import load_dotenv
+load_dotenv()
+
+# pyrefly: ignore [missing-import]
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain_core.messages import SystemMessage, HumanMessage
+# pyrefly: ignore [missing-import]
 from langchain_groq import ChatGroq
 
-# Configuration
 MODEL_NAME = "Qwen/Qwen3.5-9B"
 PROMPT_DIR = "src/multi_agent_pipeline/prompts/social_agent"
-
 
 def _load_prompt(filename: str) -> str:
     """Read a prompt template file (containing {placeholders}) from PROMPT_DIR."""
@@ -15,15 +18,15 @@ def _load_prompt(filename: str) -> str:
     with open(path, "r") as file:
         return file.read()
 
-
-# < ---- Return The LLM API ---> 
 def get_llm(temperature: float = 0.3, max_new_tokens: int = 600):
     """Build a ChatHuggingFace client for Qwen3.5-9B with thinking mode disabled."""
     print(f"[get_llm] Building HF endpoint client for model={MODEL_NAME}, temp={temperature}")
+    hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN") or os.getenv("HF_TOKEN")
     hf_endpoint = HuggingFaceEndpoint(
         model=MODEL_NAME,
         temperature=temperature,
         max_new_tokens=max_new_tokens,
+        huggingfacehub_api_token=hf_token,
         model_kwargs={
             "extra_body": {"chat_template_kwargs": {"enable_thinking": False}}
         },
@@ -35,11 +38,12 @@ def get_llm(temperature: float = 0.3, max_new_tokens: int = 600):
 
 def get_groq_llm(temperature: float = 0.3, max_new_tokens: int = 600):
     print(f"[get_groq_llm] Building Groq client, temp={temperature}, max_tokens={max_new_tokens}")
+    groq_key = os.getenv("GROQ_API_KEY")
     chat = ChatGroq(
         model="openai/gpt-oss-20b",
         temperature=temperature,
         max_tokens=max_new_tokens,
-        ,
+        groq_api_key=groq_key,
     )
     print("[get_groq_llm] Groq client ready")
     return chat

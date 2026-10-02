@@ -3,7 +3,6 @@ from typing import Dict
 from huggingface_hub import InferenceClient
 from src.multi_agent_pipeline.social_agent import get_llm, get_groq_llm, _call, _load_prompt
 
-# Configuration
 IMAGE_MODEL = "black-forest-labs/FLUX.1-schnell"
 
 class SummarizingAgent:
@@ -44,17 +43,15 @@ def generate_image(
     width: int = 1024,
     height: int = 1024,
     num_inference_steps: int = 4,
+    token: str = None
 ) -> str:
     """
     Generate an image from a text prompt using FLUX.1-schnell via the
     Hugging Face Inference API, and save it to disk.
-
-    FLUX.1-schnell is a distilled model optimized for ~4 inference steps
-    and guidance_scale=0.0 -- more steps/guidance generally do not improve
-    quality for this specific model and just cost more time.
     """
+    hf_token = token or os.getenv("HF_TOKEN")
     print(f"[generate_image] Generating image | prompt_len={len(prompt)} chars, size={width}x{height}")
-    client = InferenceClient(model=IMAGE_MODEL)
+    client = InferenceClient(model=IMAGE_MODEL, token=hf_token)
 
     try:
         image = client.text_to_image(

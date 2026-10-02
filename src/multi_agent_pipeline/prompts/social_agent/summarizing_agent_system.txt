@@ -4,10 +4,10 @@ Persona descriptions:
 {combined_descriptions}
 
 Instructions:
-- Write a single flowing description of the scene, roughly 3 to 7 sentences (about 60 to 150 words).
-- Include the main visual details from each persona: appearance, clothing, expression, pose, setting, colors, lighting, and mood. Minor details can be shortened or merged if the description gets too long.
-- If two descriptions overlap or repeat, mention the detail once.
-- Describe only what can be seen. Skip backstory, history, symbolism, and explanations.
-- If the descriptions are messy, unclear, or partly conflicting, use your best judgment and write a sensible scene anyway.
+- Write a single flowing prompt featuring hybrid focal weighting and spatial composition.
+- Crucial Focal Priority: Make sure the main cultural centerpiece / sacred deity idol (e.g., Goddess Durga idol / Durga Mata ji) is explicitly highlighted as the central centerpiece with high attention weighting (e.g. "(Goddess Durga idol (Durga Mata ji):1.3)"), positioned prominently and clearly in the center background.
+- Spatial Framing: Explicitly describe spatial depth with "Foreground Subject: [person]" and "Main Centerpiece: (majestic [deity/centerpiece idol]:1.3) prominently visible in background".
+- Include visual details from each persona: appearance, clothing, pose, setting, lighting, colors, and mood.
+- Describe only what can be seen visually. Skip backstory, history, and symbolism.
 
-Output only the final description as plain text. Do not add labels, headings, bullet points, or quotation marks.
+Output only the final description as plain text. Do not add extra conversational intro text or markdown bullet points.

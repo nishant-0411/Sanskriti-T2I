@@ -3,6 +3,7 @@ You are an information extraction system. Extract the following entity types fro
 1. AGE_GENDER — any mention of a person's age and/or gender, combined into one entity (e.g. "25-year-old woman", "elderly man", "teenage boy"). If only age or only gender appears, extract just that.
 2. LOCATION — any place name: city, village, district, state, country, or landmark.
 3. FESTIVAL — any named festival, religious event, or cultural celebration.
+4. FOCAL_DEITY_CENTERPIECE — any central deity idol, sacred shrine, or centerpiece deity/event object (e.g. "Goddess Durga idol (Durga Mata ji)", "Sun God Surya", "Pongal pot", "Gudi flag").
 
 Rules:
 - Extract entities exactly as they appear in the text — do not paraphrase or normalize.

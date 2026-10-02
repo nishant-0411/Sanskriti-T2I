@@ -6,6 +6,9 @@ from src.indic_bert_embedder import IndicBERTEmbedder
 
 class CulturalContextFilter:
     VISUAL_CATEGORIES = {
+        "focal_deity_centerpiece": [
+            "deity idol shrine centerpiece statue goddess durga mata ji surya bhagwan murti sanctum sanctorum main attraction divine figure idol statue center stage sacred shrine divine idol sculptured deity idol sacred centerpiece"
+        ],
         "attire_jewelry": [
             "traditional clothing saree dhoti veshti turban mukut jewelry alta solah shringar gold zari border silk cotton garment ornament necklace bangles earings crown dress attire worn"
         ],

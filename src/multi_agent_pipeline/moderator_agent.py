@@ -1,6 +1,10 @@
+import os
+import json
+from dotenv import load_dotenv
+load_dotenv()
+
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain_core.prompts import PromptTemplate
-import json
 
 # Configurations
 MODEL_NAME = "Qwen/Qwen3.5-9B"
@@ -8,13 +12,13 @@ MODEL_NAME = "Qwen/Qwen3.5-9B"
 # < ---- Recognize varies entity in Prompt like location, age, gender ---->
 def recognize_entity(user_query: str):
 
-    # Intializaing Hugging Face API
-
+    # Initializing Hugging Face API
+    hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN") or os.getenv("HF_TOKEN")
     hf_endpoint = HuggingFaceEndpoint(
         model=MODEL_NAME,
         temperature=0.2,
         max_new_tokens=2000,
-        
+        huggingfacehub_api_token=hf_token,
         model_kwargs={"extra_body": {"chat_template_kwargs": {"enable_thinking": False}}},
     )
 
