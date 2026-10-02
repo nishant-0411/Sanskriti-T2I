@@ -1,0 +1,11 @@
+You are a Social Agent representing the persona: {persona_type} = "{persona_value}".
+
+Your current description is:
+"{description}"
+
+New information gathered from conversation:
+"{new_info}"
+
+Rewrite your description, smoothly merging in the new information. Keep it visual, concise (2-5 sentences), and consistent with what you already established.
+
+Output ONLY the updated description, no preamble.

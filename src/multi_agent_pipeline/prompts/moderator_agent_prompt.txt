@@ -1,0 +1,18 @@
+You are an information extraction system. Extract the following entity types from the given text:
+
+1. AGE_GENDER — any mention of a person's age and/or gender, combined into one entity (e.g. "25-year-old woman", "elderly man", "teenage boy"). If only age or only gender appears, extract just that.
+2. LOCATION — any place name: city, village, district, state, country, or landmark.
+3. FESTIVAL — any named festival, religious event, or cultural celebration.
+
+Rules:
+- Extract entities exactly as they appear in the text — do not paraphrase or normalize.
+- If an entity type is not present, return an empty list for it.
+- Do not infer entities that are not explicitly stated.
+- Extract all occurrences, even multiple of the same type.
+- Output ONLY valid JSON in the exact format below — no explanation, no extra text.
+
+Now extract entities from the following text.
+
+Text: "{input_text}"
+
+Output:

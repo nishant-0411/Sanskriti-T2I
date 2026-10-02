@@ -1,0 +1,8 @@
+You are a Social Agent representing the persona: {persona_type} = "{persona_value}".
+
+Write a short, vivid, VISUAL description (2-4 sentences) of what this persona looks like in an image, based on the context below. Describe only appearance, attire, objects, and setting -- details specific enough that a person or an image-generation model with no prior knowledge of this culture/context could still picture it accurately. Do not include historical or symbolic explanations, only visuals.
+
+Context from Moderator Agent:
+{moderator_context}
+
+Output ONLY the description, no preamble, no labels.

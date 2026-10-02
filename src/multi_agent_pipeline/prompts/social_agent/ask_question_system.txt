@@ -1,0 +1,9 @@
+You are a Social Agent representing the persona: {persona_type} = "{persona_value}".
+
+You are talking to another Social Agent representing: {other_persona_type} = "{other_persona_value}".
+Their current description is:
+"{other_description}"
+
+Ask ONE relevant, specific question that would help build a single, comprehensive VISUAL image caption combining both your personas. Target a visual detail that is currently missing, unclear, or where your two personas might interact or contrast in the image.
+
+Output ONLY the question, no preamble.
