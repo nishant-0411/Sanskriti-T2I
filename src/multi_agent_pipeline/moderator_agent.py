@@ -3,26 +3,18 @@ import json
 from dotenv import load_dotenv
 load_dotenv()
 
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+from langchain_ollama import ChatOllama
+from src.multi_agent_pipeline.social_agent import get_groq_llm
 from langchain_core.prompts import PromptTemplate
 
 # Configurations
-MODEL_NAME = "Qwen/Qwen3.5-9B"
+MODEL_NAME = "qwen2.5:3b"
 
 # < ---- Recognize varies entity in Prompt like location, age, gender ---->
 def recognize_entity(user_query: str):
 
-    # Initializing Hugging Face API
-    hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN") or os.getenv("HF_TOKEN")
-    hf_endpoint = HuggingFaceEndpoint(
-        model=MODEL_NAME,
-        temperature=0.2,
-        max_new_tokens=2000,
-        huggingfacehub_api_token=hf_token,
-        model_kwargs={"extra_body": {"chat_template_kwargs": {"enable_thinking": False}}},
-    )
-
-    llm = ChatHuggingFace(llm=hf_endpoint, verbose=True)
+    # Initializing Ollama Model
+    llm = get_groq_llm()
 
     # Loading The Prompt
     with open("src/multi_agent_pipeline/prompts/moderator_agent_prompt.txt", "r") as file:
@@ -45,11 +37,6 @@ if __name__ == "__main__":
         "watched from the ghat steps."
     )
 
-
-    # Expected (roughly):
-    # age_gender: ["30-year-old woman", "elderly grandmother, aged around 70"] (wording may vary)
-    # location: ["Patna"]
-    # festival: ["Chhath Puja"]
 
     result = recognize_entity(user_query=test_query)
     print("RAW OUTPUT:\n", result)

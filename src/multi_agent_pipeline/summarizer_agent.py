@@ -3,7 +3,7 @@ from typing import Dict
 from huggingface_hub import InferenceClient
 from src.multi_agent_pipeline.social_agent import get_llm, get_groq_llm, _call, _load_prompt
 
-IMAGE_MODEL = "black-forest-labs/FLUX.1-schnell"
+IMAGE_MODEL = "Qwen/Qwen-Image"
 
 class SummarizingAgent:
     """
@@ -11,21 +11,22 @@ class SummarizingAgent:
     single, coherent text-to-image generation prompt.
     """
 
-    def __init__(self, llm=None):
+    def __init__(self, llm=None, verbose: bool = False):
         self.llm = llm or get_groq_llm()
         self.final_caption = ""
+        self.verbose = verbose
 
     def summarize(self, agent_descriptions: Dict[str, str]) -> str:
         """
         agent_descriptions: dict mapping agent name -> its final description,
         i.e. the return value of SocialAgentOrchestrator.run().
         """
-        print(f"[SummarizingAgent] summarize() start | {len(agent_descriptions)} descriptions")
+        if self.verbose: print(f"[SummarizingAgent] summarize() start | {len(agent_descriptions)} descriptions")
 
         combined = "\n".join(f"- {desc}" for desc in agent_descriptions.values())
 
         print("< ---- Combined Context ---- >")
-        print(combined)
+        if self.verbose: print(combined)
 
         template = _load_prompt("summarizing_agent_system.txt")
         system_prompt = template.format(combined_descriptions=combined)
@@ -44,36 +45,31 @@ def generate_image(
     height: int = 1024,
     num_inference_steps: int = 4,
     token: str = None
-) -> str:
+):
     """
     Generate an image from a text prompt using FLUX.1-schnell via the
     Hugging Face Inference API, and save it to disk.
     """
-    hf_token = token or os.getenv("HF_TOKEN")
-    print(f"[generate_image] Generating image | prompt_len={len(prompt)} chars, size={width}x{height}")
-    client = InferenceClient(model=IMAGE_MODEL, token=hf_token)
-
-    try:
-        image = client.text_to_image(
-            prompt,
-            num_inference_steps=num_inference_steps,
-            guidance_scale=0.0,
-            width=width,
-            height=height,
-        )
-    except Exception as e:
-        print(f"[generate_image] ERROR during text_to_image: {e}")
-        raise
+   
+    client = InferenceClient(
+        provider="fal-ai",
+        api_key=os.environ["HF_TOKEN"],
+    )
+    
+    image = client.text_to_image(
+        prompt=prompt,
+        model=IMAGE_MODEL,
+        num_inference_steps=num_inference_steps,
+        width=width,
+        height=height
+    )
 
     image.save(output_path)
-    print(f"[generate_image] Image saved -> {output_path}")
+
     return output_path
 
 
 if __name__ == "__main__":
-    # Example: run this against whatever final_descriptions your
-    # SocialAgentOrchestrator produced. Swapped in some sample data here
-    # so this file can be run/tested on its own.
     final_descriptions = {
         "agent-1": "A 30-year-old woman with dark hair tied back, wearing a "
                    "simple cotton saree in warm yellow and orange tones.",

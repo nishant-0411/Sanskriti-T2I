@@ -42,8 +42,8 @@ def test_context_filter():
 
     sample_context = [{
         "title": "Chhath Puja",
-        "text": "Devotees stand in river waters to offer sunset arghya using bamboo soop filled with fruits and sugarcane. Women wear yellow sarees with vermilion nose markings. The population of Patna is 2 million.",
-        "visual_keywords": ["soop", "yellow saree", "sindoor"]
+        "text": "",
+        "visual_keywords": ["soop", "yellow saree", "sindoor"]Devotees stand in river waters to offer sunset arghya using bamboo soop filled with fruits and sugarcane. Women wear yellow sarees with vermilion nose markings. The population of Patna is 2 million.
     }]
 
     categorized = filter_obj.filter_and_categorize("छठ पूजा", sample_context)

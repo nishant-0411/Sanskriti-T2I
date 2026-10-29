@@ -1,30 +1,37 @@
 from src.multi_agent_pipeline.moderator_agent import recognize_entity
-from src.multi_agent_pipeline.social_agent import SocialAgent, SocialAgentOrchestrator, get_groq_llm
+from src.multi_agent_pipeline.social_agent import SocialAgent, SocialAgentOrchestrator, get_groq_llm, get_ollama_llm
 from src.multi_agent_pipeline.summarizer_agent import SummarizingAgent, generate_image
-from src.pipeline import CulturalPromptPipeline
-import json
+from src.multi_agent_pipeline.prompt_refinement import refine_prompt_from_image
+from src.context_rag import run_pipeline
+from pathlib import Path
 
+THRESHOLD = 7
 
-def run_pipeline(user_query: str, output_path = "image2.png"):
+# Pipeline 1
+def run(user_query: str, output_path = "image2.png", verbose: bool = False):
+    # Fetch The Information of culture
+    state = run_pipeline(user_query)
+    context_query = state["final_prompt"]
+
     # Moderator Agent
     print("< ----- Running Moderating Agent ----- >")
-    result = recognize_entity(user_query=user_query)
+    result = recognize_entity(user_query=context_query)
     parsed = json.loads(result.content) # type: ignore
-
-    print(parsed)
 
     # Social Agent Iteration
     print("< ---- Running Social Agent ---- >")
     social_agents = []
     for name, persona in parsed.items():
-        social_agent = SocialAgent(name=f"{name} Agent", 
-                                   persona_type=name, 
-                                   persona_value=persona[0], 
-                                   llm=get_groq_llm()
-                                )
-        social_agents.append(social_agent)
+        if persona:
+            social_agent = SocialAgent(name=f"{name} Agent", 
+                                    persona_type=name, 
+                                    persona_value=persona[0], 
+                                    llm=get_groq_llm(),
+                                    verbose=verbose
+                                    )
+            social_agents.append(social_agent)
 
-    orechestrate = SocialAgentOrchestrator(social_agents, rounds=1)
+    orechestrate = SocialAgentOrchestrator(social_agents, rounds=1, verbose=verbose)
     final_description = orechestrate.run(moderator_context=user_query)
     print(final_description)
 
@@ -38,28 +45,44 @@ def run_pipeline(user_query: str, output_path = "image2.png"):
 
     print("< ----- Generating Image ----- >")
 
-    generate_image(summarized_descritpion, output_path=output_path)
+# Pipeline 2
+def run2(user_query: str, output_path: str = "test1/image.png", turns: int = 1):
+    # Fetch The Information of culture
+    print("< ---- Fetching Info From internet and Wikipedia ---- >")
+    state = run_pipeline(user_query)
+    context_query = state["final_prompt"]
 
-def run_pipeline_2(user_query: str, output_path="image.png"):
+    # Generate Image
+    print("< ---- Generating First Image ---- >")
+    image_path = generate_image(context_query, output_path=output_path)
 
-    # Creating Pipeline 
-    prompt_pipeline = CulturalPromptPipeline()
-    final_response = prompt_pipeline.run(user_query)
+    # Run The Prompt Refinement
+    for _ in range(turns):
+        print("< ---- Running Promt Refinement ---- >")
 
-    # generate image
-    generate_image(final_response["structured_prompt"], output_path=output_path)
+        state = refine_prompt_from_image(
+            image_path=image_path,
+            user_query=user_query,
+            context_query=context_query
+        )
 
-def run_pipeline_3():
-    generate_image("An elderly man in a crisp white dhoti and kurta kneels in prayer with hands clasped before a towering, brilliantly lit pandal adorned with gold and crimson cloth, marigold garlands, and glowing lanterns, surrounded by a subtle crowd in evening festive ambience." , output_path="pandal.png")
+        refined_prompt = state.get("refined_prompt")
+        score: int = state.get("cultural_score") # type: ignore
+
+        print("< ---- Generating Image ---- >")
+        image_path = generate_image(refined_prompt, output_path=image_path) # type: ignore
+        
+        if isinstance(score, int) and score >= THRESHOLD:
+            break
 
 
 if __name__ == "__main__":
     # ---- Test case 2 (new): different festival, location, and persona ----
     test_query_2 = (
-        
+        "On Pongal day in a Tamil Nadu village, women draw kolam at the doorstep and cook pongal in a clay pot."
     )
 
-    
-    run_pipeline_3()
+    run2(test_query_2)
+
 
 
